@@ -326,4 +326,4 @@ const counter_offer_vendor1 = async ({ page}) => {
 }
 
 
-export { rel_event , surrogate_bid, qa_event , qa_vendor_bid , test , counter_offer, counter_offer_vendor1};
+export {surrogate_bid, qa_event , qa_vendor_bid , test , counter_offer, counter_offer_vendor1};
