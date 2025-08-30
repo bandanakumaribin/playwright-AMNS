@@ -100,16 +100,16 @@ for (let i = 0; i < 2; i++) {
 }
 await page.waitForTimeout(2000);
 await page.getByRole('button', { name: 'Submit' }).first().click();
-await page.waitForTimeout(2000);
+await page.waitForTimeout(1000);
 
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Bid submitted successfully ",
   fmessage:  "Bid submission failed" 
 })
-await page.waitForTimeout(2000);
+await page.waitForTimeout(1000);
 
-await page.getByRole('tab', { name: 'RFQ' }).click();
+//await page.getByRole('tab', { name: 'RFQ' }).click();
 await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
 await page.getByRole('button', { name: 'Save' }).click();
 await page.waitForTimeout(1000);
