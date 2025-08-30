@@ -80,7 +80,7 @@ export function USERS(target: "qa-api" | "ril-bestq", role: UserRole) {
       };
     } else {
       return {
-        FRONT_END: "https://vendor-test-best-q.preview.procol.tech/",
+        FRONT_END: "https://vendor-main.preview.procol.tech/",
         BACKEND_INSTANCE: "qa-api",
         LOGIN_METHOD: "phone",
         USER_MOBILE: "1000000312",
