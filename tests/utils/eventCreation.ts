@@ -5,76 +5,10 @@ import { ACTIVE_BACKEND, USERS, TEST_TIMEOUT } from "../setupBlocks/constant";
 
 //let rfxText = ''; 
 
-const rel_event = async ({ page }) => {
-
- if(ACTIVE_BACKEND == 'qa-api'){
-  await page.getByRole('button', {  name: 'icon: plus New Event M   icon'  }).click();
- }
- else{
- await page.getByRole('button', {  name: 'icon: plus New Event icon'  }).click();
- }
- await page.getByRole('menuitem', { name: 'eRFX Project Manage sourcing' }).click();
-// Add product
-  await page.getByRole('combobox').filter({ hasText: 'Search and add line items' }).click();
-  await page.getByRole('combobox').filter({ hasText: 'Search and add line items' }).getByRole('textbox').fill("pro");
-  await page.getByRole('option').first().click();
-  
-  for (let i = 0; i < 1; i++) {
-    await page.getByText('Search and add line items').click();
-    await page.getByRole('option').nth(i).click();
-  }
-  console.log("PR items added to cart");
-
- // Fill Quantities
-  const quantities = ["20","20"];
-  for (let i = 0; i < quantities.length; i++) {
-    await page.getByRole("spinbutton", { name: "Quantity" }).nth(i).fill(quantities[i]);
-  }
- await page.getByRole('button', { name: 'Create Project' }).click();
- await page.getByRole('menuitem', { name: 'Technical Stage' }).click();
- await page.getByRole('menuitem', { name: 'RFQ' }).click();
- await page.getByRole('button', { name: 'Create Project' }).click();
-   if(ACTIVE_BACKEND == 'qa-api'){
-  await qa_event({ page });
- }
- else {
- await page.getByRole('tab', { name: 'Technical Stage' }).click();
- await page.getByText('Select Template', { exact: true }).click();
- await page.getByRole('menuitem', { name: 'RFQ Technical Section –' }).click();
- await page.getByRole('button', { name: '+ Add Evaluators' }).click();
- await page.getByRole('option', { name: 'Akshay Raina akshay.raina@ril' }).click();
- await page.getByRole('tab', { name: 'RFQ' }).click();
- await page.getByRole('button', { name: 'template iconSelect Templates' }).click();
- await page.getByRole('menuitem', { name: 'Buy MRO Services ARC' }).click();
- await page.getByText('Select option').nth(1).dblclick();
- await page.getByRole('option', { name: 'XS2' }).first().click();
- await page.locator('td').first().dblclick();
- await page.getByRole('row', { name: '20 Litre (Litre)' }).getByRole('textbox').fill("1");
- await page.locator('tr:nth-child(3) > td').first().dblclick();
- await page.getByRole('row', { name: 'MAT-456 30 Litre (Litre)' }).getByRole('textbox').fill("2");
- await page.locator('tr:nth-child(4) > td').first().dblclick();
-//  await page.getByRole('row', { name: '40 Litre (Litre)' }).getByRole('textbox').fill("3");
- await page.locator('td:nth-child(2)').first().dblclick();
- await page.getByRole('row', { name: 'MAT-345 20 Litre (Litre)' }).getByRole('textbox').fill("aa");
- await page.locator('tr:nth-child(3) > td:nth-child(2)').dblclick();
- await page.locator('td[aria-disabled="false"][data-celltype="main_line_description_custom"] input[type="text"]').fill("bb");
- await page.locator('tr:nth-child(4) > td:nth-child(2)').dblclick();
-//  await page.locator('td[aria-disabled="false"][data-celltype="main_line_description_custom"][data-cell-error="false"] input[type="text"]').fill("cc");
-
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-//  await page.getByRole('combobox', { name: /Search vendors you want to add/ }).locator('input.ant-select-search__field')
- await page.locator('input.ant-select-search__field#participantSelection').fill("Abb");
- await page.getByRole('menuitem', { name: '0000329265 (ABB LTD) Faridabad' }).first().click();
- await page.getByRole('button', { name: 'Invite POC' }).click();
- await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByLabel('Subcategory Name').getByRole('button', { name: 'Publish' }).click();
- await page.waitForTimeout(5000);
-//  let rfxText = await page.getByText('RFX-').textContent();
-//  console.log(rfxText);
-}
-};
-
 const qa_event = async ({ page }) => {
+  const epochSeconds = Math.floor(Date.now() / 1000);
+  let title = String("Auto_AMNS_" + epochSeconds);
+ await page.getByRole('textbox', { name: 'Enter the title of the project' }).fill(title);
  await page.getByRole('tab', { name: 'Technical Stage' }).click();
  await page.getByRole('button', { name: 'Technical Stage icon: right' }).click();
  await page.getByRole('radio', { name: 'I\'ll do line-item wise' }).click();
@@ -135,51 +69,18 @@ for (let i = 0; i < 2; i++) {
 
 await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
-await page.getByLabel('Baby').getByRole('button', { name: 'Publish' }).click();
+await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(3000);
-console.log("Project publish successfully");
-//rfxText = (await page.getByText('RFX-').textContent())?.trim();
+ await validateAndLog({
+    locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
+    smessage: "Project created successfully with title: " + title,
+    fmessage:  "Project creation failed" + title
+  })//rfxText = (await page.getByText('RFX-').textContent())?.trim();
 //console.log("Captured RFX:", rfxText);
 };
 
 const qa_vendor_bid = async ({ page }) => {
- /* //await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).click();
-  //await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(rfxText);
-  await page.getByLabel('icon: search').locator('svg').dblclick();
- // await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).press("Enter");
-  await page.waitForTimeout(2000);
-
-  await page.locator('.styles_stageTitle__IUGUn').first().click();
-  await page.getByRole('button', { name: 'I will participate' }).click();
-  // await page.getByRole('tab', { name: 'Technical Stage' }).click();
-  await page.waitForTimeout(2000);
-  await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
-  if (await page.getByText('Quick Fill').first().isVisible()) {
-    console.log("Quick Fill is visible");
-    await page.waitForTimeout(2000);
-  } 
-  await page.getByText('Quick Fill').first().click();
-  await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-  await page.getByText('Quick Fill').nth(1).click();
-  await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-  await page.waitForTimeout(2000);
-  await page.getByRole('button', { name: 'Submit' }).first().click(); */
-
-
-
-//const quickFill = page.getByText('Quick Fill').first();
-/*if (await quickFill.isVisible()) {
-  console.log('Quick Fill is visible');
-}
-await quickFill.click();
-await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-await page.getByText('Quick Fill').nth(1).click();
-await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-await page.getByRole('button', { name: 'Submit' }).first().click();*/
-
-
-
-
+ 
 await page.getByLabel('icon: search').locator('svg').dblclick();
 await page.waitForTimeout(2000);
 await page.locator('.styles_stageTitle__IUGUn').first().click();
@@ -199,12 +100,15 @@ for (let i = 0; i < 2; i++) {
 }
 await page.waitForTimeout(2000);
 await page.getByRole('button', { name: 'Submit' }).first().click();
+await page.waitForTimeout(2000);
 
 await validateAndLog({
-  locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
-  smessage: "Project created successfully with title: ",
-  fmessage:  "Project creation failed" 
+  locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
+  smessage: "Bid submitted successfully ",
+  fmessage:  "Bid submission failed" 
 })
+await page.waitForTimeout(2000);
+
 await page.getByRole('tab', { name: 'RFQ' }).click();
 await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
 await page.getByRole('button', { name: 'Save' }).click();
@@ -280,86 +184,116 @@ let a= 0;
 a++;
 }
  await validateAndLog({
-  locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
-  smessage: "Project created successfully with title: ",
-  fmessage:  "Project creation failed" 
+  locator: page.getByRole('tab', { name: 'RFQ Submitted' }),
+  smessage: "Bid submitted successfully ",
+  fmessage:  "Bid submission failed" 
 })
 };
 
 const surrogate_bid = async ({ page }) => {
-
-await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
-await page.getByRole('link', { name: 'first_name-102 last_name-102' }).first().click();
-// await page.locator('div._headerSection_xwjmv_32 >> div[class*="_projectRefId_"]', { hasText: /^RFX-\d+$/ });
-// Surrogate Bid - Tech 
-await page.getByRole('tab', { name: 'Technical Stage' }).click();
-await page.getByRole('tab', { name: 'Participants' }).click();
-await page.getByRole('listitem').filter({ hasText: 'Company - 309--121226Add Bid' }).getByRole('button').click();
-if (await page.getByText('Quick Fill').first().isVisible()) {
-  console.log(` Quick Fill is visible`);
-  await page.waitForTimeout(1000);
-} 
-await page.getByText('Quick Fill').first().click();
-await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-await page.getByText('Quick Fill').nth(1).click();
-await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-await page.getByRole('button', { name: 'Submit' }).click();
-// Surrogate Bid - RFQ
-// inline
-await page.getByRole('tab', { name: 'RFQ' }).click();
-if (await page.getByRole('tab', { name: 'Participants' }).isVisible()) {
-  console.log(` Participants is visible`);
-  await page.waitForTimeout(1000);
-} 
-await page.getByRole('tab', { name: 'Participants' }).dblclick();
-await page.getByRole('button', { name: 'icon: plus Add Bid' }).first().click();
-await page.locator('td:nth-child(7)').first().dblclick();
-await page.getByRole('cell', { name: '₹ /NO' }).getByRole('textbox').fill("10");
-await page.locator('tr:nth-child(3) > td:nth-child(7)').dblclick();
-await page.getByRole('cell', { name: '₹ /Unit' }).getByRole('textbox').fill("15");
-let i = 0;
-  while (!await page.getByRole('cell', { name: '%' }).getByRole('textbox').isVisible() && i < 5) {
-    await page.locator('td:nth-child(11)').first().dblclick();
-    await page.waitForTimeout(1000);
-    i++;
-  }
-await page.getByRole('cell', { name: '%' }).getByRole('textbox').fill("4");
-
-let j = 0;
-  while (!await page.getByRole('row', { name: '2 Product - 10(300377116)' }).getByRole('textbox').isVisible() && j < 5) {
-    await page.locator('tr:nth-child(3) > td:nth-child(11)').dblclick();
-    await page.waitForTimeout(1000);
-    j++;
-  }
-await page.getByRole('row', { name: '2 Product - 10(300377116)' }).getByRole('textbox').fill("4");
-
-await page.locator('td:nth-child(13)').first().dblclick();
-await page.getByRole('row', { name: '1 Product1 Details PR' }).getByRole('textbox').fill("5");
-await page.locator('tr:nth-child(3) > td:nth-child(13)').dblclick();
-await page.getByRole('row', { name: '2 Product - 10(300377116)' }).getByRole('textbox').fill("5");
-// global
-let k = 0;
-  while (!await page.getByRole('option', { name: 'ASW' }).isVisible() && k < 3) {
-    await page.getByRole('row', { name: 'Incoterms*', exact: true }).locator('div').nth(1).click();
-    await page.waitForTimeout(1000);
-    k++;
-  }
-await page.getByRole('option', { name: 'ASW' }).click();
-await page.getByRole('row', { name: 'Destination for Incoterms*' }).locator('td').nth(1).click();
-await page.getByRole('tooltip', { name: 'Destination for Incoterms' }).getByRole('textbox').fill("Delhi");
-await page.getByRole('row', { name: 'Vendor Category*' }).locator('div').nth(1).click();
-await page.getByRole('option', { name: 'Service Provider' }).click();
-// locator('._numberWrapper_1mlcc_2940').first()
-await page.getByRole('row', { name: 'Incoming Domestic Freight*' }).locator('input').click();
-await page.getByRole('row', { name: 'Incoming Domestic Freight*' }).locator('input').fill("5");
-await page.getByRole('row', { name: 'Warranty Terms*' }).locator('div').nth(1).click();
-await page.getByRole('option', { name: '12 months from Supply and 18' }).nth(1).click();
-await page.getByRole('row', { name: 'Payment Terms*' }).locator('div').nth(1).click();
-await page.getByRole('option', { name: 'AB09' }).click();
-await page.getByRole('row', { name: 'Validity of Quotation*' }).locator('td').nth(1).click();
-await page.locator('div').filter({ hasText: /^Today$/ }).click();
-await page.getByRole('button', { name: 'Submit Quote' }).click();
-};
+  // Search & open event
+ await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
+ await page.getByRole('link', { name: 'first_name-102 last_name-102' }).first().click();
+ // Surrogate Bid - Tech 
+ await page.getByRole('tab', { name: 'Technical Stage' }).click();
+ await page.getByRole('tab', { name: 'Participants' }).click();
+ await page.getByRole('listitem').filter({ hasText: 'Company - 309--121226Add Bid' }).getByRole('button').click()
+   // Quick Fill (done twice)
+   for (let i = 0; i < 2; i++) {
+     await page.getByText('Quick Fill').nth(i).click();
+     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+   }
+ await page.getByRole('button', { name: 'Submit' }).click();
+ // Surrogate Bid - RFQ
+ // inline
+ await page.getByRole('tab', { name: 'RFQ' }).click();
+ if (await page.getByRole('tab', { name: 'Participants' }).isVisible()) {
+   console.log(` Participants is visible`);
+   await page.waitForTimeout(1000);
+ } 
+ await page.getByRole('tab', { name: 'Participants' }).dblclick();
+ await page.getByRole('button', { name: 'icon: plus Add Bid' }).first().click();
+ // Fill Rates
+  const rates = ["10","15"];
+   for (let i = 0; i <= 1; i++) {
+     await page.locator('td:nth-child(7)').nth(i).dblclick();
+     await page.getByRole('cell', { name: '₹ /NO' }).getByRole('textbox').fill(rates[i]);
+   }
+ // fill line gst percentage
+ const lineGST = [
+   { row: 0, value: "4" },  { row: 1, value: "4" }   
+ ];
+ for (const linegst of lineGST) {
+   const textbox = page.getByRole('cell', { name: '%' }).nth(linegst.row).getByRole('textbox');
+ 
+   let attempts = 0;
+   while (!(await textbox.isVisible()) && attempts < 5) {
+     await page.locator('td:nth-child(11)').nth(linegst.row).dblclick();
+     await page.waitForTimeout(300);
+     attempts++;
+   }
+ 
+   await textbox.fill(linegst.value);
+   await textbox.press("Enter");
+ }
+ // fill delivery Time
+ const lineTax = [
+   { cellIndex: 0, rowName: '1 Product1 Details PR', value: "5" },
+   { cellIndex: 1, rowName: '2 Product1 Details PR', value: "5" }
+ ];
+ for (const line of lineTax) {
+   await page.locator('td:nth-child(13)').nth(line.cellIndex).dblclick();
+   await page.getByRole('row', { name: line.rowName }).getByRole('textbox').fill(line.value);
+ }
+ // global
+ // Define mandatory fields with type + value
+ const mandatoryQuoteFields = {
+   "Incoterms*": { type: "dropdown", value: "first" },
+   "Destination for Incoterms*": { type: "text", value: "Delhi" },
+   "Vendor Category*": { type: "dropdown", value: "first" },
+   "Incoming Domestic Freight*": { type: "text", value: "5", selector: "input" },
+   "Warranty Terms*": { type: "dropdown", value: "first" },
+   "Payment Terms*": { type: "dropdown", value: "first" },
+   "Validity of Quotation*": { type: "date", value: "Today" },
+ };
+ 
+ for (let [field, config] of Object.entries(mandatoryQuoteFields)) {
+   const row = page.getByRole("row", { name: field, exact: true });
+ 
+   if (config.type === "dropdown") {
+     let k = 0;
+     while (!(await page.getByRole("option").first().isVisible()) && k < 3) {
+       await row.locator("div").nth(1).click();
+       await page.waitForTimeout(1000);
+       k++;
+     }
+     if (config.value === "first") {
+       await page.getByRole("option").first().click();
+     } 
+     // else {
+     //   await page.getByRole("option", { name: config.value }).click();
+     // }
+   }
+ 
+   else if (config.type === "text") {
+     if (config.selector === "input") {
+       await row.locator("input").click();
+       await row.locator("input").fill(config.value);
+     } else {
+       await row.locator("td").nth(1).click(); //td → selects a table cell (<td> element).
+       await page.getByRole("tooltip").getByRole("textbox").fill(config.value);
+     }
+   }
+ 
+   else if (config.type === "date") {
+     await row.locator('svg').click();
+     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
+   }
+ }
+ console.log("Mandatory Fields Filled");
+ // finally submit
+ await page.getByRole("button", { name: "Submit Quote" }).click();
+ };
 
 const counter_offer = async ({ page }) => {
 // client side 
@@ -391,32 +325,5 @@ const counter_offer_vendor1 = async ({ page}) => {
   await page.getByRole('button', { name: 'Accept Offer' }).click();
 }
 
-const counter_offer_vendor2 = async ({ page}) => {
-// Decline counter offer
-  await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).press("Enter");
-  await page.locator('.styles_stageTitle__IUGUn').first().click();
-  await page.getByRole('tab', { name: 'RFQ' }).click();
-  await page.getByRole('button', { name: 'Decline' }).click();
-  await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill("abc");
-  await page.getByLabel('Declining the counter offer').getByRole('button', { name: 'Decline' }).click();
 
-}
-
-const counter_offer_vendor3 = async ({ page}) => {
-// Modify counter offer
-  await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).press("Enter");
-  await page.locator('.styles_stageTitle__IUGUn').first().click();
-  await page.getByRole('tab', { name: 'RFQ' }).click();
-  await page.getByRole('gridcell', { name: '₹ 20 /NO icon: arrow-right ₹' }).click();
-  await page.getByRole('button', { name: 'Decline' }).click();
-  await page.getByRole('button', { name: 'Modify counter offer' }).click();
-  await page.getByRole('gridcell', { name: '₹ 20 /NO icon: arrow-right ₹' }).click();
-  await page.locator('input[type="text"]').fill("10");
-  await page.locator('input[type="text"]').press("Enter");
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Modified Bid' }).first().click();
-  await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill("abc");
-  await page.getByLabel('Want to negotiate on the').getByRole('button', { name: 'Place Modified Bid' }).click();
-}
-
-export { rel_event , surrogate_bid, qa_event , qa_vendor_bid , test , counter_offer, counter_offer_vendor1 , counter_offer_vendor2 , counter_offer_vendor3};
+export { rel_event , surrogate_bid, qa_event , qa_vendor_bid , test , counter_offer, counter_offer_vendor1};
