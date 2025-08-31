@@ -1,7 +1,7 @@
 import { test } from "./setupBlocks/global.setup";
 import { clientLogin, vendorLogin} from "./setupBlocks/login.setup";
 import {ACTIVE_BACKEND , TEST_TIMEOUT } from "./setupBlocks/constant";
-import { rel_event , qa_vendor_bid, surrogate_bid , counter_offer, counter_offer_vendor1, counter_offer_vendor2 , counter_offer_vendor3} from "./utils/eventCreation";
+import { qa_event , qa_vendor_bid, surrogate_bid , counter_offer, counter_offer_vendor1, counter_offer_vendor2 , counter_offer_vendor3} from "./utils/eventCreation";
 
 
 // Set BACKEND_INSTANCE dynamically before each test based on test title
@@ -28,7 +28,7 @@ test.beforeEach(async () => {
       // test.info().setTimeout(TEST_TIMEOUT);
       await clientLogin({ page: clientPage });
       await clientPage.getByRole('link', { name: 'Events', exact: true }).click();
-      await rel_event({ page: clientPage });
+      await qa_event({ page: clientPage });
       // Fetch and store RFX text
       rfxText = (await clientPage.getByText('RFX-').textContent())?.trim();
       console.log("Captured RFX:", rfxText);
