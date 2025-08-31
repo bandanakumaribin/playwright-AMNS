@@ -6,8 +6,30 @@ import { ACTIVE_BACKEND, USERS, TEST_TIMEOUT } from "../setupBlocks/constant";
 //let rfxText = ''; 
 
 const qa_event = async ({ page }) => {
-  const epochSeconds = Math.floor(Date.now() / 1000);
+const epochSeconds = Math.floor(Date.now() / 1000);
   let title = String("Auto_AMNS_" + epochSeconds);
+  await page.getByRole('button', {  name: 'icon: plus New Event M   icon'  }).click();
+  await page.getByRole('menuitem', { name: 'eRFX Project Manage sourcing' }).click();
+  // Add product
+    await page.getByRole('combobox').filter({ hasText: 'Search and add line items' }).click();
+    await page.getByRole('combobox').filter({ hasText: 'Search and add line items' }).getByRole('textbox').fill("pro");
+    await page.getByRole('option').first().click();
+    
+    for (let i = 0; i < 1; i++) {
+      await page.getByText('Search and add line items').click();
+      await page.getByRole('option').nth(i).click();
+    }
+    console.log("PR items added to cart");
+  
+   // Fill Quantities
+    const quantities = ["20","20"];
+    for (let i = 0; i < quantities.length; i++) {
+      await page.getByRole("spinbutton", { name: "Quantity" }).nth(i).fill(quantities[i]);
+    }
+   await page.getByRole('button', { name: 'Create Project' }).click();
+   await page.getByRole('menuitem', { name: 'Technical Stage' }).click();
+   await page.getByRole('menuitem', { name: 'RFQ' }).click();
+   await page.getByRole('button', { name: 'Create Project' }).click();
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).fill(title);
  await page.getByRole('tab', { name: 'Technical Stage' }).click();
  await page.getByRole('button', { name: 'Technical Stage icon: right' }).click();
