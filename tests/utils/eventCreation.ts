@@ -6,7 +6,7 @@ import { ACTIVE_BACKEND, USERS, TEST_TIMEOUT } from "../setupBlocks/constant";
 //let rfxText = ''; 
 
 const qa_event = async ({ page }) => {
-const epochSeconds = Math.floor(Date.now() / 1000);
+  const epochSeconds = Math.floor(Date.now() / 1000);
   let title = String("Auto_AMNS_" + epochSeconds);
   await page.getByRole('button', {  name: 'icon: plus New Event M   icon'  }).click();
   await page.getByRole('menuitem', { name: 'eRFX Project Manage sourcing' }).click();
@@ -93,14 +93,13 @@ await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(3000);
- await validateAndLog({
-    locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
-    smessage: "Project created successfully with title: " + title,
-    fmessage:  "Project creation failed" + title
-  })//rfxText = (await page.getByText('RFX-').textContent())?.trim();
+await validateAndLog({
+  locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
+  smessage: "Project created successfully"+ title,
+  fmessage:  "Project creation failed"+ title
+})//rfxText = (await page.getByText('RFX-').textContent())?.trim();
 //console.log("Captured RFX:", rfxText);
 };
-
 const qa_vendor_bid = async ({ page }) => {
  
 await page.getByLabel('icon: search').locator('svg').dblclick();
