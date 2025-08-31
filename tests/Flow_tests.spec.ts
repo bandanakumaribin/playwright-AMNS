@@ -4,19 +4,6 @@ import {ACTIVE_BACKEND , TEST_TIMEOUT } from "./setupBlocks/constant";
 import { qa_event , qa_vendor_bid, surrogate_bid , counter_offer, counter_offer_vendor1, counter_offer_vendor2 , counter_offer_vendor3} from "./utils/eventCreation";
 
 
-// Set BACKEND_INSTANCE dynamically before each test based on test title
-// test.beforeEach(async ({}, testInfo) => {
-//   if (testInfo.title.includes('env-ril-bestq')) {
-//     process.env.BACKEND_INSTANCE = 'ril-bestq';
-//   } else if (testInfo.title.includes('env-qa-api')) {
-//     process.env.BACKEND_INSTANCE = 'qa-api';
-//   }
-// });
-
-//let rfxText = ''; // ✅ Shared variable across tests
-
-
-
 test.beforeEach(async () => {
     test.info().setTimeout(TEST_TIMEOUT);
   });
