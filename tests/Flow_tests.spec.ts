@@ -8,7 +8,7 @@ test.beforeEach(async () => {
     test.info().setTimeout(TEST_TIMEOUT);
   });
   
-  test.describe.serial("Event Creation", () => {
+  test.describe.serial("Event Creation @Regression @Smoke", () => {
   
   let rfxText = '';
     test("Event Creation Flow @TC001 ", async ({ clientPage  }) => {
